@@ -11,13 +11,13 @@ import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
 @EnableMongoRepositories(basePackageClasses = InformationRepository.class)
-public class HelloApplication {
+public class UrlShortenerApplication {
 
 	@Autowired
 	private InformationRepository informationRepository;
 
 	public static void main(String[] args) {
-		SpringApplication.run(HelloApplication.class, args);
+		SpringApplication.run(UrlShortenerApplication.class, args);
 	}
 
 	@PostConstruct
