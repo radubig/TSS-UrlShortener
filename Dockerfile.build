@@ -1,0 +1,7 @@
+FROM gradle:8.12.0-jdk21
+
+RUN mkdir /build
+
+WORKDIR /build
+
+CMD ["sh", "build.sh"]
