@@ -1,25 +1,35 @@
-# Project description
+# Url Shortener
 
-A simple URL shortener that allows users to convert long links into shorter, more manageable ones. The service supports tracking, expiration dates and URL management.
+Un scurtător de URL-uri simplu care permite utilizatorilor să convertească link-uri lungi în unele mai scurte și mai ușor de gestionat. Serviciul suportă urmărirea accesărilor, date de expirare și gestionarea URL-urilor.
 
-# Run/debug code in IntelliJ
-* Install Java 21
-* Build the code
-    * IntelliJ will build it automatically
-    * If you want to build it from command line and also run unit tests, run: ```./gradlew build```
-* Create an IntelliJ run configuration for a Jar application
-    * Add in the configuration the JAR path to the build folder `./build/libs/hello-0.0.1-SNAPSHOT.jar`
-* Start the MongoDB container using docker compose
-    * ```docker-compose up -d mongo```
-* Run/debug your IntelliJ run configuration
+> Cod Echipa: B18
 
-# Running the project
+## Software folosit
 
-* You can access the API endpoints at:
-    * http://localhost:8080/
-* You can access the MongoDB Admin UI at:
-  * http://localhost:8090/
+- Backend: Java 21 + Spring Boot 3.4.0
+- Build Tools: Gradle 8.12
+- Database: MongoDB 6.0.20
+- Testare si code coverage: JUnit 5.11.4 + JaCoCo latest
+- IDE: IntelliJ IDEA
 
-# Running the tests
+# Rulare/debug în IntelliJ
+* Instalează Java 21
+* Setează versiunea JDK a proiectului la 21 (`File > Project Structure > SDK`)
+* Compilează codul
+  * Se poate folosi și comanda `./gradlew build` pentru a rula testele automat.
+* Creează o configurație de rulare în IntelliJ pentru o aplicație Jar
+  * Adaugă în configurație calea către fișierul JAR din folderul de build:  
+    `./build/libs/hello-0.0.1-SNAPSHOT.jar`
+* Pornește containerul MongoDB folosind docker compose: `docker-compose up -d mongo`
+* Rulează configurația de rulare din IntelliJ
 
-* Add a JUnit test configuration in IntelliJ
+# Rularea proiectului
+
+* Poți accesa endpoint-urile API la:  
+  [http://localhost:8080/](http://localhost:8080/)
+* Poți accesa interfața de administrare MongoDB la:  
+  [http://localhost:8090/](http://localhost:8090/)
+
+# Rularea testelor
+
+* Adaugă o configurație de test JUnit în IntelliJ, setată să testeze tot din pachetul `hello.test`
