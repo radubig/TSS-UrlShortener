@@ -12,6 +12,15 @@ Un scurtător de URL-uri simplu care permite utilizatorilor să convertească li
 - Testare si code coverage: JUnit 5.11.4 + JaCoCo latest
 - IDE: IntelliJ IDEA
 
+## Capturi de ecran
+### Acoperirea testelor folosing Intellij
+![Coverage 2025-04-08](https://github.com/user-attachments/assets/d6f7850a-9859-4685-8e9e-4c6ed08c3550)
+### Rezultatele testelor, generate de Gradle
+![Test Results](https://github.com/user-attachments/assets/fdd7d4be-070b-4e53-988e-bf34615b23b9)
+### Acoperire generata de JaCoCo
+![Jacoco Coverage](https://github.com/user-attachments/assets/6dd270e1-0238-429d-94b5-dd75f9c4c227)
+
+
 # Rulare/debug în IntelliJ
 * Instalează Java 21
 * Setează versiunea JDK a proiectului la 21 (`File > Project Structure > SDK`)
