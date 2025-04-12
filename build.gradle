@@ -4,12 +4,22 @@ plugins {
 	id 'org.asciidoctor.jvm.convert' version '2.4.0'
 	id 'java'
 	id 'jacoco'
+	id 'info.solidsoft.pitest' version '1.15.0'
 }
 
 group = 'ro.unibuc'
 version = '0.0.1-SNAPSHOT'
 java {
 	sourceCompatibility = JavaVersion.VERSION_21
+}
+
+pitest {
+	junit5PluginVersion = '1.2.2'
+	pitestVersion = '1.18.2'
+	verbose = true
+	targetClasses = ['ro.unibuc.hello.service.UrlShortenerService']
+	targetTests = ['ro.unibuc.hello.service.UrlShortenerServiceTest']
+	mutators = ['STRONGER']
 }
 
 repositories {

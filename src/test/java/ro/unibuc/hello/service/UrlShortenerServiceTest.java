@@ -13,6 +13,7 @@ import ro.unibuc.hello.data.ShortUrlRepository;
 import ro.unibuc.hello.dto.UrlRequest;
 import ro.unibuc.hello.exception.NoPermissionException;
 import ro.unibuc.hello.exception.ShortUrlNotFoundException;
+import ro.unibuc.hello.exception.TooManyEntriesException;
 import ro.unibuc.hello.utils.ShortUrlGenerator;
 import ro.unibuc.hello.utils.Tracking;
 
@@ -20,9 +21,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 public class UrlShortenerServiceTest {
@@ -58,6 +58,18 @@ public class UrlShortenerServiceTest {
         assertEquals(shortUrl, mockShortUrl.getShortenedUrl());
     }
 
+
+    @Test
+    void testExceededUrlCreationLimit(){
+        String testUserId = "testId";
+        when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(10);
+        UrlRequest urlRequest = new UrlRequest("www.google.com", null);
+
+        TooManyEntriesException exception = assertThrows(TooManyEntriesException.class, () ->
+                urlShortenerService.createShortUrl(urlRequest, testUserId));
+        assertEquals("The user " + testUserId + " has reached their short url creation limit", exception.getMessage());
+    }
+
     @Test
     void testRequestUrlInThePast() {
         String originalUrl = "www.test.com";
@@ -84,6 +96,7 @@ public class UrlShortenerServiceTest {
         String originalUrl = urlShortenerService.getOriginalUrl(mockShortUrl.getShortenedUrl());
 
         assertEquals(mockShortUrl.getOriginalUrl(), originalUrl);
+        verify(tracking, times(1)).incrementVisits(mockShortUrl.getShortenedUrl());
     }
 
     @Test
@@ -122,7 +135,9 @@ public class UrlShortenerServiceTest {
 
     @Test
     void testCreateNewShortUrl(){
-        UrlRequest newUrlRequest = new UrlRequest("test.com", LocalDateTime.parse("2025-08-08T12:00:00"));
+        String originalUrl = "test.com";
+        LocalDateTime expirationDate = LocalDateTime.now().plusMonths(5);
+        UrlRequest newUrlRequest = new UrlRequest(originalUrl, expirationDate);
         String userId = "abc";
         String generatedShortUrl = "abcdef";
         when(shortUrlRepository.findByShortenedUrl(mockShortUrl.getShortenedUrl()))
@@ -141,6 +156,53 @@ public class UrlShortenerServiceTest {
                 .thenReturn(createdShortUrl);
 
         String newShortUrl = urlShortenerService.createShortUrl(newUrlRequest, userId);
+
+
+        verify(shortUrlRepository).save(argThat(shortUrlEntity -> {
+            assertEquals(originalUrl, shortUrlEntity.getOriginalUrl());
+            assertEquals(userId, shortUrlEntity.getCreatorUserId());
+            assertEquals(expirationDate, shortUrlEntity.getExpirationDate());
+            assertEquals(generatedShortUrl, shortUrlEntity.getShortenedUrl());
+            return true;
+        }));
+
+        assertEquals(generatedShortUrl, newShortUrl);
+    }
+
+
+    @Test
+    void testCreateNewShortUrlWithoutExpirationDate(){
+        String originalUrl = "test.com";
+        UrlRequest newUrlRequest = new UrlRequest(originalUrl, null);
+        String userId = "abc";
+        String generatedShortUrl = "abcdef";
+        when(shortUrlRepository.findByShortenedUrl(mockShortUrl.getShortenedUrl()))
+                .thenReturn(null);
+        when(shortUrlRepository.findByOriginalUrl(newUrlRequest.getOriginalUrl()))
+                .thenReturn(null);
+        when(shortUrlGenerator.getShortUrl())
+                .thenReturn(generatedShortUrl);
+
+        ShortUrlEntity createdShortUrl = new ShortUrlEntity();
+        createdShortUrl.setOriginalUrl(newUrlRequest.getOriginalUrl());
+        createdShortUrl.setExpirationDate(newUrlRequest.getExpiresAt());
+        createdShortUrl.setCreatorUserId(userId);
+
+        when(shortUrlRepository.save(any()))
+                .thenReturn(createdShortUrl);
+
+        String newShortUrl = urlShortenerService.createShortUrl(newUrlRequest, userId);
+
+
+        verify(shortUrlRepository).save(argThat(shortUrlEntity -> {
+            assertEquals(originalUrl, shortUrlEntity.getOriginalUrl());
+            assertEquals(userId, shortUrlEntity.getCreatorUserId());
+            assertEquals(LocalDate.now().plusMonths(1), shortUrlEntity.getExpirationDate().toLocalDate());
+            assertEquals(generatedShortUrl, shortUrlEntity.getShortenedUrl());
+            return true;
+        }));
+
+
         assertEquals(generatedShortUrl, newShortUrl);
     }
 

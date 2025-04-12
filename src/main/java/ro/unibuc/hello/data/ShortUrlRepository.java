@@ -12,6 +12,8 @@ public interface ShortUrlRepository extends MongoRepository<ShortUrlEntity, Stri
 
     ShortUrlEntity findByShortenedUrl(String shortenedUrl);
 
+    int countByCreatorUserId(String userId);
+
     @Transactional
     void deleteByExpirationDateBefore(LocalDateTime expirationDate);
 }

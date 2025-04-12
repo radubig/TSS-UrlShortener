@@ -10,6 +10,7 @@ import ro.unibuc.hello.dto.UrlRequest;
 import ro.unibuc.hello.dto.UrlStats;
 import ro.unibuc.hello.exception.NoPermissionException;
 import ro.unibuc.hello.exception.ShortUrlNotFoundException;
+import ro.unibuc.hello.exception.TooManyEntriesException;
 import ro.unibuc.hello.utils.ShortUrlGenerator;
 import ro.unibuc.hello.utils.Tracking;
 
@@ -31,6 +32,7 @@ public class UrlShortenerService {
         String originalUrl = urlRequest.getOriginalUrl();
         LocalDateTime expiresAt = urlRequest.getExpiresAt();
 
+
         if(originalUrl == null){
             throw new IllegalArgumentException("Url must not be empty");
         }
@@ -40,7 +42,12 @@ public class UrlShortenerService {
             return existingLink.get().getShortenedUrl();
         }
 
-        if(expiresAt != null && expiresAt.isBefore(LocalDateTime.now())){
+        if(shortUrlRepository.countByCreatorUserId(userId) >= 10){
+            throw new TooManyEntriesException(userId);
+        }
+
+        if(expiresAt != null)
+            if(expiresAt.isBefore(LocalDateTime.now())){
             throw new IllegalArgumentException("Expiration date must be in the future");
         }
 
@@ -48,7 +55,6 @@ public class UrlShortenerService {
         newShortUrl.setOriginalUrl(originalUrl);
         newShortUrl.setExpirationDate(Objects.requireNonNullElseGet(expiresAt, () -> LocalDateTime.now().plusMonths(1L)));
         newShortUrl.setCreatorUserId(userId);
-        newShortUrl = shortUrlRepository.save(newShortUrl);
 
         String shortUrl = shortUrlGenerator.getShortUrl();
 
