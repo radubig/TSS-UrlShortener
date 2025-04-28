@@ -12,6 +12,29 @@ Un scurtător de URL-uri simplu care permite utilizatorilor să convertească li
 - Testare si code coverage: JUnit 5.11.4 + JaCoCo latest
 - IDE: IntelliJ IDEA
 
+## Graful cauza-efect
+Cauzele si efectele identificate sunt:
+```
+C1: Url-ul este null
+C2: Url-ul este deja scurtat
+C3: Utilizatorul are deja 10 url-uri scurtate
+C4: Data expirarii este in trecut
+
+Ef1: IllegalArgumentException: Url-ul nu poate fi null
+Ef2: Returnare url scurt existent
+Ef3: TooManyEntriesException
+Ef4: IllegalArgumentException: Data expirarii trebuie sa fie in viitor
+Ef5: Creare si returnare url scurt nou
+```
+
+Graful cauza-efect:
+
+![](./screenshots/CauseEffectGraph.png)
+
+Tabelul de decizie:
+
+![](./screenshots/DecisionTable.png)
+
 ## Mutation Testing
 Am folosit PIT, integrat prin gradle cu urmatorarea configuratie:
 ```groovy
