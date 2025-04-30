@@ -20,10 +20,10 @@ C2: Url-ul este deja scurtat
 C3: Utilizatorul are deja 10 url-uri scurtate
 C4: Data expirarii este in trecut
 
-Ef1: IllegalArgumentException: Url-ul nu poate fi null
+Ef1: IllegalArgumentException: Url must not be empty
 Ef2: Returnare url scurt existent
 Ef3: TooManyEntriesException
-Ef4: IllegalArgumentException: Data expirarii trebuie sa fie in viitor
+Ef4: IllegalArgumentException: Expiration date must be in the future
 Ef5: Creare si returnare url scurt nou
 ```
 
@@ -34,6 +34,24 @@ Graful cauza-efect:
 Tabelul de decizie:
 
 ![](./screenshots/DecisionTable.png)
+
+## Clase de echivalenta
+Pentru metoda `createShortUrl` din clasa `UrlShortenerService` am identificat urmatoarele clase de echivalenta, bazate pe DTO-ul pasat ca parametru si starea bazei de date din momentul interogarii, pe care le-am grupat impreuna in date de intrare:
+1. Domeniul de intrari:
+  - U_1 = URL-ul pasat ca parametru este nul
+  - U_2 = URL-ul pasat ca parametru este valid si nu se afla deja in baza de date
+  - U_3 = URL-ul pasat ca parametru este valid si se afla deja in baza de date
+  - D_1 = Data de expirare este in viitor sau nula (in cazul in care este nula, este mai apoi setata automat la o luna in viitor)
+  - D_2 = Data de expirare este in trecut
+  - C_1 = Utilizatorul are deja 10 sau mai multe URL-uri scurtate
+  - C_2 = Utilizatorul are 9 sau mai putine URL-uri scurtate
+2. Domeniul de iesiri:
+  - E_1 = Exceptie IllegalArgumentException: Url must not be empty
+  - E_2 = Exceptie IllegalArgumentException: Expiration date must be in the future
+  - E_3 = Exceptie TooManyEntriesException
+  - E_4 = returnare URL original pe baza URL-ului scurtat
+
+Combinatii de valori provenite din fiecare clasa de echivalenta au fost folosite pentru a genera teste unitare bazate pe graful cauza-efect.
 
 ## Mutation Testing
 Am folosit PIT, integrat prin gradle cu urmatorarea configuratie:
