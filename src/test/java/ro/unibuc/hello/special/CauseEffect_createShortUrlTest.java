@@ -32,7 +32,7 @@ public class CauseEffect_createShortUrlTest {
     @InjectMocks
     private UrlShortenerService urlShortenerService;
     private ShortUrlEntity mockShortUrl = new ShortUrlEntity();
-    private String testUserId = "testId";
+    private final static String testUserId = "testId";
 
     @BeforeEach
     public void setUp() {
@@ -43,6 +43,19 @@ public class CauseEffect_createShortUrlTest {
         mockShortUrl.setCreatorUserId(testUserId);
         mockShortUrl.setTotalVisits(0L);
         mockShortUrl.setExpirationDate(LocalDateTime.now().plusMonths(1));
+
+        // Boundary values
+        when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(9);
+    }
+
+    // Boundary value for future time
+    public static LocalDateTime getFutureTime() {
+        return LocalDateTime.now().plusSeconds(1);
+    }
+
+    // Boundary value for past time
+    public static LocalDateTime getPastTime() {
+        return LocalDateTime.now().minusSeconds(1);
     }
 
     // C1 => Ef1
@@ -50,7 +63,7 @@ public class CauseEffect_createShortUrlTest {
     public void CETest_01()
     {
         // Setup causes
-        UrlRequest urlRequest = new UrlRequest(null, null);
+        UrlRequest urlRequest = new UrlRequest(null, getFutureTime());
 
         // Verify effect
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -63,7 +76,7 @@ public class CauseEffect_createShortUrlTest {
     public void CETest_02()
     {
         // Setup causes
-        UrlRequest urlRequest = new UrlRequest(null, LocalDateTime.now().minusDays(1));
+        UrlRequest urlRequest = new UrlRequest(null, getPastTime());
 
         // Verify effect
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -77,7 +90,7 @@ public class CauseEffect_createShortUrlTest {
     {
         // Setup causes
         when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(10);
-        UrlRequest urlRequest = new UrlRequest(null, null);
+        UrlRequest urlRequest = new UrlRequest(null, getFutureTime());
 
         // Verify effect
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -91,7 +104,7 @@ public class CauseEffect_createShortUrlTest {
     {
         // Setup causes
         when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(10);
-        UrlRequest urlRequest = new UrlRequest(null, LocalDateTime.now().minusDays(1));
+        UrlRequest urlRequest = new UrlRequest(null, getPastTime());
 
         // Verify effect
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -104,7 +117,7 @@ public class CauseEffect_createShortUrlTest {
     public void CETest_05()
     {
         // Setup causes
-        UrlRequest urlRequest = new UrlRequest("www.google.com", null);
+        UrlRequest urlRequest = new UrlRequest("www.google.com", getFutureTime());
         when(shortUrlRepository.findByOriginalUrl("www.google.com")).thenReturn(mockShortUrl);
 
         // Verify effect
@@ -117,7 +130,7 @@ public class CauseEffect_createShortUrlTest {
     public void CETest_06()
     {
         // Setup causes
-        UrlRequest urlRequest = new UrlRequest("www.google.com", LocalDateTime.now().minusDays(1));
+        UrlRequest urlRequest = new UrlRequest("www.google.com", getPastTime());
         when(shortUrlRepository.findByOriginalUrl("www.google.com")).thenReturn(mockShortUrl);
 
         // Verify effect
@@ -131,7 +144,7 @@ public class CauseEffect_createShortUrlTest {
     {
         // Setup causes
         when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(10);
-        UrlRequest urlRequest = new UrlRequest("www.google.com", null);
+        UrlRequest urlRequest = new UrlRequest("www.google.com", getFutureTime());
         when(shortUrlRepository.findByOriginalUrl("www.google.com")).thenReturn(mockShortUrl);
 
         // Verify effect
@@ -145,7 +158,7 @@ public class CauseEffect_createShortUrlTest {
     {
         // Setup causes
         when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(10);
-        UrlRequest urlRequest = new UrlRequest("www.google.com", LocalDateTime.now().minusDays(1));
+        UrlRequest urlRequest = new UrlRequest("www.google.com", getPastTime());
         when(shortUrlRepository.findByOriginalUrl("www.google.com")).thenReturn(mockShortUrl);
 
         // Verify effect
@@ -159,7 +172,7 @@ public class CauseEffect_createShortUrlTest {
     {
         // Setup causes
         when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(10);
-        UrlRequest urlRequest = new UrlRequest("www.google.com", null);
+        UrlRequest urlRequest = new UrlRequest("www.google.com", getFutureTime());
 
         // Verify effect
         TooManyEntriesException exception = assertThrows(TooManyEntriesException.class, () ->
@@ -173,7 +186,7 @@ public class CauseEffect_createShortUrlTest {
     {
         // Setup causes
         when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(10);
-        UrlRequest urlRequest = new UrlRequest("www.google.com", LocalDateTime.now().minusDays(1));
+        UrlRequest urlRequest = new UrlRequest("www.google.com", getPastTime());
 
         // Verify effect
         TooManyEntriesException exception = assertThrows(TooManyEntriesException.class, () ->
@@ -186,7 +199,7 @@ public class CauseEffect_createShortUrlTest {
     public void CETest_11()
     {
         // Setup causes
-        UrlRequest urlRequest = new UrlRequest("www.google.com", LocalDateTime.now().minusDays(1));
+        UrlRequest urlRequest = new UrlRequest("www.google.com", getPastTime());
 
         // Verify effect
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -199,7 +212,7 @@ public class CauseEffect_createShortUrlTest {
     public void CETest_12()
     {
         // Setup causes
-        UrlRequest urlRequest = new UrlRequest("www.example.com", LocalDateTime.now().plusDays(1));
+        UrlRequest urlRequest = new UrlRequest("www.example.com", getFutureTime());
         when(shortUrlRepository.findByOriginalUrl("www.example.com")).thenReturn(null);
         when(shortUrlRepository.countByCreatorUserId(testUserId)).thenReturn(0);
         when(shortUrlGenerator.getShortUrl()).thenReturn("K8sjNf");
