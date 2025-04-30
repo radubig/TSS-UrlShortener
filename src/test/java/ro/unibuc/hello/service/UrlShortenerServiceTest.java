@@ -123,6 +123,18 @@ public class UrlShortenerServiceTest {
     }
 
     @Test
+    void testDeleteShortUrl() {
+        String shortUrl = "testUrl";
+        when(shortUrlRepository.findByShortenedUrl(shortUrl))
+                .thenReturn(mockShortUrl);
+        doNothing().when(shortUrlRepository).delete(mockShortUrl);
+
+        urlShortenerService.deleteShortUrl(shortUrl, mockShortUrl.getCreatorUserId());
+
+        verify(shortUrlRepository, times(1)).delete(mockShortUrl);
+    }
+
+    @Test
     void testTryToGetUrlStatsWithNoPermission(){
         when(shortUrlRepository.findByShortenedUrl(mockShortUrl.getShortenedUrl()))
                 .thenReturn(mockShortUrl);
