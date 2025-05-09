@@ -53,6 +53,24 @@ Pentru metoda `createShortUrl` din clasa `UrlShortenerService` am identificat ur
 
 Combinatii de valori provenite din fiecare clasa de echivalenta au fost folosite pentru a genera teste unitare bazate pe graful cauza-efect.
 
+## Graful flux de control
+Graful orientat a fost construit pe baza metodei de mai jos, folosing numerele de linie asa cum apar in captura de ecran. 
+
+![MetodaCreateShortUrl](https://github.com/user-attachments/assets/e5262725-1ea3-456f-88a6-0b3431fc6a6e)
+
+Acesta este graful rezultat:
+
+![GrafFluxDeControl](https://github.com/user-attachments/assets/71f4f9ca-a1c5-40ff-b18e-96f1210db0cd)
+
+### Acoperire la nivel de ramura
+
+|   | Decizii |
+|---|---|
+| 1 | originalUrl == null |
+| 2 | existingLink.isPresent() |
+| 3 | shortUrlRepository.countByCreatorUserId(userId) >= 10 |
+| 4 | expiresAt != null && expiresAt.isBefore(LocalDateTime.now())|
+
 ## Mutation Testing
 Am folosit PIT, integrat prin gradle cu urmatorarea configuratie:
 ```groovy
@@ -69,6 +87,7 @@ Testele cu muntati au fost rulate doar pe clasa UrlShortenerService, unde se afl
 
 Inainte de modificari, rezultatele rularii testelor PIT au fost urmatoarele:
 ![ResultsBeforeModifications](https://github.com/radubig/TSS-UrlShortener/blob/master/screenshots/UrlShortenerServiceMutationResults.png)
+
 
 Cu urmatoarii mutanti care nu au fost descopriti de testele unitare:
 ![SurvivingMutations](https://github.com/radubig/TSS-UrlShortener/blob/master/screenshots/failedMutations.png)
