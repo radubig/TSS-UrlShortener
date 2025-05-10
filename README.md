@@ -161,6 +161,8 @@ In final, se ajunge la urmatorul raport:
 ### Acoperire generata de JaCoCo
 ![Jacoco Coverage](https://github.com/user-attachments/assets/6dd270e1-0238-429d-94b5-dd75f9c4c227)
 
+## Raport privind folosirea tool-urilor de AI in cadrul proiectului
+Vezi [Raport_AI.md](Raport_AI.md)
 
 # Rulare/debug în IntelliJ
 * Instalează Java 21
