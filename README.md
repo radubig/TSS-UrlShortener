@@ -4,12 +4,14 @@ Un scurtător de URL-uri simplu care permite utilizatorilor să convertească li
 
 > Cod Echipa: B18
 
+Demo aplicatie: https://youtu.be/0dONQWLcMsI
+
 ## Software folosit
 
 - Backend: Java 21 + Spring Boot 3.4.0
 - Build Tools: Gradle 8.12
 - Database: MongoDB 6.0.20
-- Testare si code coverage: JUnit 5.11.4 + JaCoCo latest
+- Testare si code coverage: JUnit 5.11.4 + JaCoCo latest + IntelliJ
 - IDE: IntelliJ IDEA
 
 ## Graful cauza-efect
@@ -52,6 +54,15 @@ Pentru metoda `createShortUrl` din clasa `UrlShortenerService` am identificat ur
   - E_4 = returnare URL original pe baza URL-ului scurtat
 
 Combinatii de valori provenite din fiecare clasa de echivalenta au fost folosite pentru a genera teste unitare bazate pe graful cauza-efect.
+
+## Valori de frontiera
+
+Pe baza claselor de echivalenta identificate anterior, am indetificat urmatoarele valori de frontiera:
+1. URL: valid, nul.
+2. Data de expirare: in viitor (+1s), in trecut (-1s), in momentul generarii request-ului.
+3. Numar de URL-uri scurtate de catre un utilizator: 9, 10.
+
+Aceste valori de frontiera au fost folosite in cadrul testelor unitare bazate pe graful cauza-efect.
 
 ## Graful flux de control
 Graful orientat a fost construit pe baza metodei de mai jos, folosing numerele de linie asa cum apar in captura de ecran. 
@@ -153,13 +164,16 @@ In final, se ajunge la urmatorul raport:
 ![UrlShortenerServiceAfterNewTests](https://github.com/radubig/TSS-UrlShortener/blob/master/screenshots/UrlShortenerServiceAfterNewTests.png)
 ![AfterModificationsMutations](https://github.com/radubig/TSS-UrlShortener/blob/master/screenshots/afterModificationsMutations.png)
 
+## Testare unitara extra + Teste de integrare
+Pe langa modalitatile de testare prezentate mai sus, am adaugat mai multe seturi de teste unitare, organizate la nivel de clasa, ce au scopul de a genera o acoperire cat mai buna la nivel de linie a aplicatiei. Pentru a acoperi si configurarea middleware-urlui raspunzator de autentificarea utilizatorilor si autorizarea request-urilor securizate prin autentificare, am adaugat si teste de integrare pe fiecare controller. Atunci cand sunt rulate impreuna testele unitare si cele de integrare, acoperirea generate de Code Coverage este imbunatatita substantial.
+
 ## Capturi de ecran
-### Acoperirea testelor folosing Intellij
-![Coverage 2025-04-08](https://github.com/user-attachments/assets/d6f7850a-9859-4685-8e9e-4c6ed08c3550)
+### Acoperirea testelor generata de IntelliJ
+![Coverage 2025-04-08](screenshots/Coverage.png)
 ### Rezultatele testelor, generate de Gradle
 ![Test Results](https://github.com/user-attachments/assets/fdd7d4be-070b-4e53-988e-bf34615b23b9)
-### Acoperire generata de JaCoCo
-![Jacoco Coverage](https://github.com/user-attachments/assets/6dd270e1-0238-429d-94b5-dd75f9c4c227)
+### Acoperire generata de JaCoCo (configurat in IntelliJ)
+![Jacoco Coverage](screenshots/Coverage-Jacoco.png)
 
 ## Raport privind folosirea tool-urilor de AI in cadrul proiectului
 Vezi [Raport_AI.md](Raport_AI.md)
